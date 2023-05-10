@@ -9,6 +9,14 @@ A re-implementation of [Amiga FPS Gloom](https://en.wikipedia.org/wiki/Gloom_(vi
 ![deluxe3.png](screenshots/deluxe3.png)
 ![organs.png](screenshots/organs.png)
 
+# What's New
+
+* Backported cheat menu from [ZGloom Vita](https://github.com/JetStreamSham/ZGloom-vita)
+* Mapped gamepad dpad to arrow keys
+* Changed scaling
+* Removed direct reference to gloom in main menu since it can play other gloom versions
+
+
 # Instructions
 
 ## Windows
