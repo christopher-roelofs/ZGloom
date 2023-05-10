@@ -7,10 +7,10 @@ void TitleScreen::Render(SDL_Surface* src, SDL_Surface* dest, Font& font)
 
 	if (status == TITLESTATUS_MAIN)
 	{
-		if (flash || (selection != MAINENTRY_PLAY)) font.PrintMessage("PLAY GLOOM", 150, dest, 1);
+		if (flash || (selection != MAINENTRY_PLAY)) font.PrintMessage("PLAY", 150, dest, 1);
 		if (flash || (selection != MAINENTRY_SELECT)) font.PrintMessage("LEVEL SELECT", 170, dest, 1);
-		if (flash || (selection != MAINENTRY_ABOUT)) font.PrintMessage("ABOUT GLOOM", 190, dest, 1);
-		if (flash || (selection != MAINENTRY_QUIT)) font.PrintMessage("EXIT GLOOM", 210, dest, 1);
+		if (flash || (selection != MAINENTRY_ABOUT)) font.PrintMessage("ABOUT", 190, dest, 1);
+		if (flash || (selection != MAINENTRY_QUIT)) font.PrintMessage("EXIT", 210, dest, 1);
 	}
 	else if (status == TITLESTATUS_SELECT)
 	{

@@ -3,21 +3,22 @@
 #include "gamelogic.h"
 #include "monsterlogic.h"
 #include "hud.h"
+#include "config.h"
 
-void BaldyPunch(MapObject& o, GameLogic* logic);
-int8_t CheckColl(MapObject& o1, MapObject &o2);
-void PutFire(MapObject& o, GameLogic* logic);
+void BaldyPunch(MapObject &o, GameLogic *logic);
+int8_t CheckColl(MapObject &o1, MapObject &o2);
+void PutFire(MapObject &o, GameLogic *logic);
 
-//used to pass around collision data for bounce logic
+// used to pass around collision data for bounce logic
 
 static int32_t clostestwall;
 
-void NullLogic(MapObject& o, GameLogic* logic)
+void NullLogic(MapObject &o, GameLogic *logic)
 {
 	return;
 }
 
-void NullLogicComp(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void NullLogicComp(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	return;
 }
@@ -43,7 +44,7 @@ int32_t BloodSpeed3()
 	return result;
 }
 
-int16_t RndDelay(MapObject&o)
+int16_t RndDelay(MapObject &o)
 {
 	/*
 	rnddelay	move	ob_range(a5), d0
@@ -58,8 +59,7 @@ int16_t RndDelay(MapObject&o)
 	return o.data.ms.delay;
 }
 
-
-void BloodyMess(MapObject& o, GameLogic* logic, int count)
+void BloodyMess(MapObject &o, GameLogic *logic, int count)
 {
 	/*
 	bloodymess	;throw random blood splots everywhere!
@@ -95,7 +95,7 @@ void BloodyMess(MapObject& o, GameLogic* logic, int count)
 	Quick x, y, z, temp;
 
 	x = o.x;
-	y.SetInt(-64);// TODO: wire up gutsy
+	y.SetInt(-64); // TODO: wire up gutsy
 	z = o.z;
 
 	temp.SetVal(BloodSpeed2());
@@ -122,12 +122,12 @@ void BloodyMess(MapObject& o, GameLogic* logic, int count)
 	}
 }
 
-void BloodyMess2(MapObject& o, GameLogic* logic, int count)
+void BloodyMess2(MapObject &o, GameLogic *logic, int count)
 {
 	Quick x, y, z, temp;
 
 	x = o.x;
-	y.SetInt(-64);// TODO: wire up gutsy
+	y.SetInt(-64); // TODO: wire up gutsy
 	z = o.z;
 
 	temp.SetVal(BloodSpeed2());
@@ -154,7 +154,7 @@ void BloodyMess2(MapObject& o, GameLogic* logic, int count)
 	}
 }
 
-void SparksLogic(MapObject& o, GameLogic* logic)
+void SparksLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	sparkslogic	subq	#1,ob_delay(a5)
@@ -183,7 +183,7 @@ void SparksLogic(MapObject& o, GameLogic* logic)
 	o.z = o.z + temp;
 }
 
-void WeaponLogic(MapObject& o, GameLogic* logic)
+void WeaponLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	weaponlogic;
@@ -256,7 +256,7 @@ void WeaponLogic(MapObject& o, GameLogic* logic)
 	}
 }
 
-void MakeSparks(MapObject& o, GameLogic* logic)
+void MakeSparks(MapObject &o, GameLogic *logic)
 {
 	MapObject sparksobj;
 
@@ -286,12 +286,12 @@ void MakeSparks(MapObject& o, GameLogic* logic)
 	}
 }
 
-void MakeSparksQ(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void MakeSparksQ(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	MakeSparks(thisobj, logic);
 }
 
-void CalcVecs(MapObject& o)
+void CalcVecs(MapObject &o)
 {
 	/*
 	calcvecs	move	ob_rot(a5), d0
@@ -323,7 +323,7 @@ void CalcVecs(MapObject& o)
 	return;
 }
 
-bool CheckVecs(MapObject& o, GameLogic* logic)
+bool CheckVecs(MapObject &o, GameLogic *logic)
 {
 	/*
 	checkvecs	movem.l	ob_xvec(a5), d6 - d7
@@ -381,7 +381,7 @@ bool CheckVecs(MapObject& o, GameLogic* logic)
 	}
 	else
 	{
-		//OK
+		// OK
 		o.x = newx;
 		o.z = newz;
 
@@ -389,7 +389,7 @@ bool CheckVecs(MapObject& o, GameLogic* logic)
 	}
 }
 
-void PauseLogic(MapObject&o, GameLogic* logic)
+void PauseLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 		pauselogic	subq	#1, ob_delay(a5)
@@ -427,11 +427,12 @@ void PauseLogic(MapObject&o, GameLogic* logic)
 
 		uint8_t ang = logic->PickCalc(o);
 
-		int16_t compang = (int16_t)(player.data.ms.rotquick.GetInt()&0xFF) - ang;
+		int16_t compang = (int16_t)(player.data.ms.rotquick.GetInt() & 0xFF) - ang;
 
-		if (compang < 0) compang = -compang;
+		if (compang < 0)
+			compang = -compang;
 
-		if ((compang>64) && (compang < 192))
+		if ((compang > 64) && (compang < 192))
 		{
 			o.data.ms.rotquick.SetInt(o.data.ms.oldrot);
 			CalcVecs(o);
@@ -439,7 +440,7 @@ void PauseLogic(MapObject&o, GameLogic* logic)
 	}
 }
 
-void Fire1(MapObject& o, GameLogic* logic)
+void Fire1(MapObject &o, GameLogic *logic)
 {
 	/*
 	fire1	bsr	pickcalc
@@ -492,18 +493,20 @@ void Fire1(MapObject& o, GameLogic* logic)
 	Shoot(o, logic, 4, 0, 1, 1, 20, logic->wtable[0].shape, logic->wtable[0].spark);
 }
 
-void MonsterFix(MapObject& o, GameLogic* logic)
+void MonsterFix(MapObject &o, GameLogic *logic)
 {
-	if (1)//!CheckVecs(o, logic))
+	if (1) //! CheckVecs(o, logic))
 	{
 		// try +/- 90 degrees
 		o.data.ms.rotquick.SetInt(((GloomMaths::RndW() > 0) ? 64 : -64) + o.data.ms.rotquick.GetInt());
 		CalcVecs(o);
-		if (CheckVecs(o, logic)) goto good;
+		if (CheckVecs(o, logic))
+			goto good;
 
 		o.data.ms.rotquick.SetInt(128 + o.data.ms.rotquick.GetInt());
 		CalcVecs(o);
-		if (CheckVecs(o, logic)) goto good;
+		if (CheckVecs(o, logic))
+			goto good;
 
 		o.data.ms.rotquick.SetInt(o.data.ms.oldrot + 128);
 		CalcVecs(o);
@@ -515,7 +518,7 @@ good:
 	o.data.ms.frame &= 0x3FFFF;
 }
 
-void MonsterMove(MapObject& o, GameLogic* logic)
+void MonsterMove(MapObject &o, GameLogic *logic)
 {
 	/*
 	monstermove	bsr	checkvecs
@@ -557,11 +560,13 @@ void MonsterMove(MapObject& o, GameLogic* logic)
 		// try +/- 90 degrees
 		o.data.ms.rotquick.SetInt(((GloomMaths::RndW() > 0) ? 64 : -64) + o.data.ms.rotquick.GetInt());
 		CalcVecs(o);
-		if (CheckVecs(o, logic)) goto good;
+		if (CheckVecs(o, logic))
+			goto good;
 
 		o.data.ms.rotquick.SetInt(128 + o.data.ms.rotquick.GetInt());
 		CalcVecs(o);
-		if (CheckVecs(o, logic)) goto good;
+		if (CheckVecs(o, logic))
+			goto good;
 
 		o.data.ms.rotquick.SetInt(o.data.ms.oldrot + 128);
 		CalcVecs(o);
@@ -573,7 +578,7 @@ good:
 	o.data.ms.frame &= 0x3FFFF;
 }
 
-void MonsterLogic(MapObject& o, GameLogic* logic)
+void MonsterLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	monsterlogic;
@@ -583,7 +588,7 @@ void MonsterLogic(MapObject& o, GameLogic* logic)
 	*/
 
 	o.data.ms.oldrot = o.data.ms.rotquick.GetInt();
-	/* 
+	/*
 		subq	#1, ob_delay(a5)
 		ble	fire1
 		;
@@ -597,10 +602,9 @@ void MonsterLogic(MapObject& o, GameLogic* logic)
 	}
 
 	MonsterMove(o, logic);
-
 }
 
-void CalcBounce(MapObject& o, GameLogic* logic)
+void CalcBounce(MapObject &o, GameLogic *logic)
 {
 
 	/*
@@ -655,7 +659,7 @@ void CalcBounce(MapObject& o, GameLogic* logic)
 
 			*/
 
-		int32_t dp = nxvec*na + nzvec*nb;
+		int32_t dp = nxvec * na + nzvec * nb;
 		dp += dp;
 		dp >>= 16;
 
@@ -728,15 +732,15 @@ void CalcBounce(MapObject& o, GameLogic* logic)
 	}
 }
 
-void FireLogic(MapObject& o, GameLogic* logic)
+void FireLogic(MapObject &o, GameLogic *logic)
 {
- 	if (!CheckVecs(o, logic))
+	if (!CheckVecs(o, logic))
 	{
 		CalcBounce(o, logic);
 	}
 	else
 	{
-		o.data.ms.frame+= (1<<16);
+		o.data.ms.frame += (1 << 16);
 		if ((o.data.ms.frame >> 16) >= o.data.ms.shape->size())
 		{
 			o.data.ms.frame = 0;
@@ -744,7 +748,7 @@ void FireLogic(MapObject& o, GameLogic* logic)
 	}
 }
 
-void PutFire(MapObject& o, GameLogic* logic)
+void PutFire(MapObject &o, GameLogic *logic)
 {
 	o.data.ms.frame += (1 << 16);
 	if ((o.data.ms.frame >> 16) >= o.data.ms.shape->size())
@@ -753,12 +757,12 @@ void PutFire(MapObject& o, GameLogic* logic)
 	}
 }
 
-void KillLogicComp(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void KillLogicComp(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	thisobj.killme = true;
 }
 
-void Shoot(MapObject& o, GameLogic* logic, int32_t colltype, int32_t collwith, int32_t hitpoints, int32_t damage, int32_t speed, std::vector<Shape>* shape, std::vector<Shape>* spark)
+void Shoot(MapObject &o, GameLogic *logic, int32_t colltype, int32_t collwith, int32_t hitpoints, int32_t damage, int32_t speed, std::vector<Shape> *shape, std::vector<Shape> *spark)
 {
 	MapObject newobject;
 
@@ -844,10 +848,10 @@ void Shoot(MapObject& o, GameLogic* logic, int32_t colltype, int32_t collwith, i
 	*/
 
 	newobject.data.ms.nxvec = camrots[1];
-	newobject.data.ms.xvec = -(int32_t)(camrots[1])*speed * 2;
+	newobject.data.ms.xvec = -(int32_t)(camrots[1]) * speed * 2;
 	newobject.data.ms.nzvec = camrots[3];
-	newobject.data.ms.zvec = (int32_t)(camrots[3])*speed * 2;
-	
+	newobject.data.ms.zvec = (int32_t)(camrots[3]) * speed * 2;
+
 	/*
 	movem.l	d0-d1,ob_xvec(a0)
 	;add.l	d0,ob_x(a0)
@@ -856,7 +860,7 @@ void Shoot(MapObject& o, GameLogic* logic, int32_t colltype, int32_t collwith, i
 	move	#32,ob_rad(a0)
 	move.l	#32*32,ob_radsq(a0)
 	;
-	
+
 	*/
 
 	newobject.data.ms.rad = 32;
@@ -867,7 +871,7 @@ void Shoot(MapObject& o, GameLogic* logic, int32_t colltype, int32_t collwith, i
 	logic->AddObject(newobject, true);
 }
 
-void TerraLogic2(MapObject& o, GameLogic* logic)
+void TerraLogic2(MapObject &o, GameLogic *logic)
 {
 	/*
 	terralogic2	;
@@ -908,7 +912,8 @@ void TerraLogic2(MapObject& o, GameLogic* logic)
 
 	o.data.ms.delay--;
 
-	if (o.data.ms.delay) return;
+	if (o.data.ms.delay)
+		return;
 
 	o.data.ms.delay = o.data.ms.firerate;
 	o.data.ms.rotquick.SetInt(logic->PickCalc(o));
@@ -918,12 +923,13 @@ void TerraLogic2(MapObject& o, GameLogic* logic)
 
 	o.data.ms.delay2--;
 
-	if (o.data.ms.delay2) return;
+	if (o.data.ms.delay2)
+		return;
 	RndDelay(o);
 	o.data.ms.logic = TerraLogic;
 }
 
-void TerraLogic(MapObject& o, GameLogic* logic)
+void TerraLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	terralogic	;
@@ -974,7 +980,7 @@ void TerraLogic(MapObject& o, GameLogic* logic)
 	}
 }
 
-void GhoulLogic(MapObject& o, GameLogic* logic)
+void GhoulLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	ghoullogic	;
@@ -991,7 +997,7 @@ void GhoulLogic(MapObject& o, GameLogic* logic)
 	*/
 	o.data.ms.bounce += 8;
 	int16_t camrots[4];
-	GloomMaths::GetCamRotRaw(o.data.ms.bounce&255, camrots);
+	GloomMaths::GetCamRotRaw(o.data.ms.bounce & 255, camrots);
 	int32_t y = camrots[0];
 	y <<= 5;
 	y >>= 16;
@@ -1025,7 +1031,7 @@ void GhoulLogic(MapObject& o, GameLogic* logic)
 	o.data.ms.rotquick.SetInt(ang);
 	o.data.ms.delay--;
 
-	if (o.data.ms.delay<=0)
+	if (o.data.ms.delay <= 0)
 	{
 		o.data.ms.frame = 1;
 		o.data.ms.framespeed = 0x2000;
@@ -1070,8 +1076,8 @@ void GhoulLogic(MapObject& o, GameLogic* logic)
 	int32_t rndval = GloomMaths::RndW();
 	rndval &= 0xFFFF;
 
-	//BCC IS UNSIGNED COMPARISON!
-	if ((rndval - (o.data.ms.movspeed>>16<<8))<0)
+	// BCC IS UNSIGNED COMPARISON!
+	if ((rndval - (o.data.ms.movspeed >> 16 << 8)) < 0)
 	{
 		SoundHandler::Play(SoundHandler::SOUND_GHOUL);
 		CalcVecs(o);
@@ -1096,7 +1102,7 @@ void GhoulLogic(MapObject& o, GameLogic* logic)
 	}
 }
 
-void WeaponGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void WeaponGot(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_TOKEN);
 
@@ -1110,11 +1116,11 @@ void WeaponGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	}
 	else
 	{
-		//megaweapon etc.. .
+		// megaweapon etc.. .
 		if (otherobj.data.ms.reload > 1)
 		{
 			otherobj.data.ms.messtimer = -127;
-			otherobj.data.ms.mess = (otherobj.data.ms.reload==2)?Hud::MESSAGES_WEAPON_BOOST_FULL : Hud::MESSAGES_WEAPON_BOOST;
+			otherobj.data.ms.mess = (otherobj.data.ms.reload == 2) ? Hud::MESSAGES_WEAPON_BOOST_FULL : Hud::MESSAGES_WEAPON_BOOST;
 			otherobj.data.ms.reload--;
 		}
 		else
@@ -1132,18 +1138,18 @@ void WeaponGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	thisobj.killme = true;
 }
 
-void InvisGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void InvisGot(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_TOKEN);
 
 	otherobj.data.ms.messtimer = -127;
 	otherobj.data.ms.mess = Hud::MESSAGES_INVISIBILITY;
 	otherobj.data.ms.invisible += 1500;
-	
+
 	thisobj.killme = true;
 }
 
-void ThermoGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void ThermoGot(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_TOKEN);
 
@@ -1154,11 +1160,10 @@ void ThermoGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	thisobj.killme = true;
 }
 
-
-void PauseLogic2(MapObject& o, GameLogic* logic)
+void PauseLogic2(MapObject &o, GameLogic *logic)
 {
 	/*
-	pauselogic2	
+	pauselogic2
 	subq	#1, ob_hurtwait(a5)
 	bgt.s.rts
 	clr	ob_frame(a5)
@@ -1176,7 +1181,7 @@ void PauseLogic2(MapObject& o, GameLogic* logic)
 	}
 }
 
-void HurtObject(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void HurtObject(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	hurtobject	move	ob_colltype(a0), d0
@@ -1217,7 +1222,7 @@ void HurtObject(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 
 int16_t lastgrunt;
 
-void HurtNGrunt(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void HurtNGrunt(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	hurtngrunt	move.l	a0, -(a7)
@@ -1238,7 +1243,7 @@ void HurtNGrunt(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	;
 	*/
 
-	auto random = GloomMaths::RndW()&3;
+	auto random = GloomMaths::RndW() & 3;
 
 	if (random == lastgrunt)
 	{
@@ -1249,24 +1254,24 @@ void HurtNGrunt(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 
 	switch (random)
 	{
-		case 0:
-			SoundHandler::Play(SoundHandler::SOUND_GRUNT);
-			break;
-		case 1:
-			SoundHandler::Play(SoundHandler::SOUND_GRUNT2);
-			break;
-		case 2:
-			SoundHandler::Play(SoundHandler::SOUND_GRUNT3);
-			break;
-		case 3:
-			SoundHandler::Play(SoundHandler::SOUND_GRUNT4);
-			break;
+	case 0:
+		SoundHandler::Play(SoundHandler::SOUND_GRUNT);
+		break;
+	case 1:
+		SoundHandler::Play(SoundHandler::SOUND_GRUNT2);
+		break;
+	case 2:
+		SoundHandler::Play(SoundHandler::SOUND_GRUNT3);
+		break;
+	case 3:
+		SoundHandler::Play(SoundHandler::SOUND_GRUNT4);
+		break;
 	}
 
 	HurtObject(thisobj, otherobj, logic);
 }
 
-void ChunkLogic(MapObject& o, GameLogic* logic)
+void ChunkLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	chunklogic	move	mode(pc),d0
@@ -1305,7 +1310,7 @@ void ChunkLogic(MapObject& o, GameLogic* logic)
 	.rts	rts
 	*/
 
-	//TODO meaty mode
+	// TODO meaty mode
 	o.data.ms.yvec += 0x8000;
 	Quick temp;
 	temp.SetVal(o.data.ms.yvec);
@@ -1325,7 +1330,7 @@ void ChunkLogic(MapObject& o, GameLogic* logic)
 	}
 }
 
-void BlowChunx(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowChunx(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	.loop	addlast	objects
@@ -1377,16 +1382,16 @@ void BlowChunx(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 		chunks.data.ms.logic = ChunkLogic;
 		chunks.data.ms.shape = &logic->objectgraphics->GetGoreShape(thisobj.t);
 		chunks.data.ms.frame = frame << 16;
-		//chunks.data.ms.shape = scale;
+		// chunks.data.ms.shape = scale;
 		chunks.data.ms.rad = logic->objectgraphics->maxwidthsgore[thisobj.t];
-		chunks.data.ms.radsq = chunks.data.ms.rad*chunks.data.ms.rad;
+		chunks.data.ms.radsq = chunks.data.ms.rad * chunks.data.ms.rad;
 		chunks.data.ms.blood = 0;
 
 		logic->newobjects.push_back(chunks);
 	}
 }
 
-void BlowObject(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowObject(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_DIE);
 	BloodyMess2(thisobj, logic, 31);
@@ -1394,7 +1399,7 @@ void BlowObject(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	thisobj.killme = true;
 }
 
-void BlowObjectNoChunks(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowObjectNoChunks(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_DIE);
 	BloodyMess2(thisobj, logic, 31);
@@ -1402,7 +1407,7 @@ void BlowObjectNoChunks(MapObject& thisobj, MapObject& otherobj, GameLogic* logi
 	thisobj.killme = true;
 }
 
-void HurtTerra(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void HurtTerra(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 		hurtterra	move.l	a0, -(a7)
@@ -1418,15 +1423,15 @@ void HurtTerra(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	HurtObject(thisobj, otherobj, logic);
 }
 
-void BlowTerra(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowTerra(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_ROBODIE);
 	BlowChunx(thisobj, otherobj, logic);
 	thisobj.killme = true;
 }
 
-//baldylogic2?
-void Baldy2Norm(MapObject& o, GameLogic* logic)
+// baldylogic2?
+void Baldy2Norm(MapObject &o, GameLogic *logic)
 {
 	/*
 	baldy_tonorm	move.l	ob_movspeed(a5),d0
@@ -1449,7 +1454,7 @@ void Baldy2Norm(MapObject& o, GameLogic* logic)
 	MonsterFix(o, logic);
 }
 
-void BaldyCharge(MapObject& o, GameLogic* logic)
+void BaldyCharge(MapObject &o, GameLogic *logic)
 {
 	/*
 	baldycharge	;
@@ -1533,7 +1538,7 @@ void BaldyCharge(MapObject& o, GameLogic* logic)
 	o.data.ms.frame = 0;
 }
 
-void BL2(MapObject& o, GameLogic* logic)
+void BL2(MapObject &o, GameLogic *logic)
 {
 	/*
 	bl2	bsr	pickcalc
@@ -1560,11 +1565,11 @@ void BL2(MapObject& o, GameLogic* logic)
 	o.data.ms.logic = BaldyCharge;
 }
 
-void BaldyLogic(MapObject& o, GameLogic* logic)
+void BaldyLogic(MapObject &o, GameLogic *logic)
 {
 	o.data.ms.delay--;
 
-	if (o.data.ms.delay>0)
+	if (o.data.ms.delay > 0)
 	{
 		MonsterMove(o, logic);
 		return;
@@ -1573,7 +1578,7 @@ void BaldyLogic(MapObject& o, GameLogic* logic)
 	BL2(o, logic);
 }
 
-int8_t CheckColl(MapObject& o1, MapObject &o2)
+int8_t CheckColl(MapObject &o1, MapObject &o2)
 {
 	/*
 	checkcoll	;check for collision between a5, and a0
@@ -1614,19 +1619,23 @@ int8_t CheckColl(MapObject& o1, MapObject &o2)
 	int32_t dx = o1.x.GetInt() - o2.x.GetInt();
 	int32_t dz = o1.z.GetInt() - o2.z.GetInt();
 
-	if (dx < 0) dx = -dx;
-	if (dz < 0) dz = -dz;
+	if (dx < 0)
+		dx = -dx;
+	if (dz < 0)
+		dz = -dz;
 
-	if (dx>radsum) return 0;
-	if (dz>radsum) return 0;
+	if (dx > radsum)
+		return 0;
+	if (dz > radsum)
+		return 0;
 
-	dx = dx*dx + dz*dz;
+	dx = dx * dx + dz * dz;
 	radsum *= radsum;
 
 	return (dx > radsum) ? 0 : -1;
 }
 
-void BaldyPunch(MapObject& o, GameLogic* logic)
+void BaldyPunch(MapObject &o, GameLogic *logic)
 {
 	/*
 	baldypunch	;
@@ -1662,9 +1671,10 @@ void BaldyPunch(MapObject& o, GameLogic* logic)
 	}
 
 	o.data.ms.delay--;
-	if (o.data.ms.delay>0) return;
+	if (o.data.ms.delay > 0)
+		return;
 
-	 o.data.ms.delay = o.data.ms.punchrate;
+	o.data.ms.delay = o.data.ms.punchrate;
 
 	if (o.data.ms.frame == 0)
 	{
@@ -1676,11 +1686,9 @@ void BaldyPunch(MapObject& o, GameLogic* logic)
 	{
 		o.data.ms.frame = 0;
 	}
-
-	
 }
 
-void LizardLogic(MapObject& o, GameLogic* logic)
+void LizardLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	lizardlogic	;
@@ -1707,7 +1715,7 @@ void LizardLogic(MapObject& o, GameLogic* logic)
 	*/
 	o.data.ms.delay--;
 
-	if (o.data.ms.delay>0)
+	if (o.data.ms.delay > 0)
 	{
 		MonsterMove(o, logic);
 		return;
@@ -1730,7 +1738,7 @@ void LizardLogic(MapObject& o, GameLogic* logic)
 	BL2(o, logic);
 }
 
-void LizHurt(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void LizHurt(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	lizhurt	move.l	a0,-(a7)
@@ -1745,13 +1753,13 @@ void LizHurt(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	HurtObject(thisobj, otherobj, logic);
 }
 
-void TrollHurt(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void TrollHurt(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_TROLLHIT);
 	HurtObject(thisobj, otherobj, logic);
 }
 
-void TrollLogic2(MapObject& o, GameLogic* logic)
+void TrollLogic2(MapObject &o, GameLogic *logic)
 {
 	/*
 	trolllogic2	subq	#1, ob_delay(a5)
@@ -1778,7 +1786,7 @@ void TrollLogic2(MapObject& o, GameLogic* logic)
 
 	o.data.ms.delay--;
 
-	if (o.data.ms.delay>0)
+	if (o.data.ms.delay > 0)
 	{
 		MonsterMove(o, logic);
 		return;
@@ -1801,9 +1809,9 @@ void TrollLogic2(MapObject& o, GameLogic* logic)
 	BL2(o, logic);
 }
 
-void TrollLogic(MapObject& o, GameLogic* logic)
+void TrollLogic(MapObject &o, GameLogic *logic)
 {
-	/*trolllogic	
+	/*trolllogic
 	move	ob_rad(a5),d0
 	mulu	#$a000,d0
 	swap	d0
@@ -1820,12 +1828,12 @@ void TrollLogic(MapObject& o, GameLogic* logic)
 	newrad >>= 16;
 
 	o.data.ms.rad = newrad;
-	o.data.ms.radsq = newrad*newrad;
+	o.data.ms.radsq = newrad * newrad;
 	o.data.ms.logic = TrollLogic2;
 	TrollLogic2(o, logic);
 }
 
-void PhantomLogic(MapObject& o, GameLogic* logic)
+void PhantomLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	phantomlogic	;
@@ -1872,10 +1880,10 @@ void PhantomLogic(MapObject& o, GameLogic* logic)
 	return;
 }
 
-void DemonPause(MapObject& o, GameLogic* logic)
+void DemonPause(MapObject &o, GameLogic *logic)
 {
 	/*
-	demonpause	
+	demonpause
 	move	ob_delay(a5),d0
 	move	d0,d1
 	and	#4,d0
@@ -1916,12 +1924,12 @@ void DemonPause(MapObject& o, GameLogic* logic)
 		moveq	#0,d1
 		bsr	playsfx
 		*/
-		uint32_t wep = (o.data.ms.delay>>3);
-		if (wep > 4)//this should never happen?
+		uint32_t wep = (o.data.ms.delay >> 3);
+		if (wep > 4) // this should never happen?
 		{
 			wep = 4;
 		}
-		Shoot(o, logic, 4, 0, logic->wtable[wep].hitpoint, logic->wtable[wep].damage*3/4, logic->wtable[wep].speed, logic->wtable[wep].shape, logic->wtable[wep].spark);
+		Shoot(o, logic, 4, 0, logic->wtable[wep].hitpoint, logic->wtable[wep].damage * 3 / 4, logic->wtable[wep].speed, logic->wtable[wep].shape, logic->wtable[wep].spark);
 		SoundHandler::Play(logic->wtable[wep].sound);
 	}
 	/*
@@ -1943,7 +1951,7 @@ void DemonPause(MapObject& o, GameLogic* logic)
 	}
 }
 
-void DemonLogic(MapObject& o, GameLogic* logic)
+void DemonLogic(MapObject &o, GameLogic *logic)
 {
 
 	/*
@@ -1976,18 +1984,29 @@ void DemonLogic(MapObject& o, GameLogic* logic)
 	CalcVecs(o);
 	// passing in a weapon number. Why not HW into demonpause? I thought it was going to be some kind of random weapon selection
 	// because, YOU IDIOT, the continual reduction of the "delay" fields allows the demon to fire multiple different kinds of bullet as it ticks down
-	o.data.ms.delay = (5<<3)-1;
+	o.data.ms.delay = (5 << 3) - 1;
 	o.data.ms.oldlogic = o.data.ms.logic;
 	o.data.ms.logic = DemonPause;
 	return;
 }
 
-void HealthGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void HealthGot(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	SoundHandler::Play(SoundHandler::SOUND_TOKEN);
 
 	otherobj.data.ms.hitpoints += 5;
-	if (otherobj.data.ms.hitpoints > 25) otherobj.data.ms.hitpoints = 25;
+
+	// cheatmode
+	if (Config::GetGM())
+	{
+		otherobj.data.ms.hitpoints = 32767;
+	}
+	else if (otherobj.data.ms.hitpoints > 25)
+	{
+		otherobj.data.ms.hitpoints = 25;
+	}
+	// --- original code below
+	// if (otherobj.data.ms.hitpoints > 25) otherobj.data.ms.hitpoints = 25;
 
 	otherobj.data.ms.messtimer = -127;
 	otherobj.data.ms.mess = Hud::MESSAGES_HEALTH_BONUS;
@@ -1995,12 +2014,12 @@ void HealthGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	thisobj.killme = true;
 }
 
-void BouncyLogic(MapObject& o, GameLogic* logic)
+void BouncyLogic(MapObject &o, GameLogic *logic)
 {
-	static const int frames[4] = { 3, 4, 3, 5 };
+	static const int frames[4] = {3, 4, 3, 5};
 
 	/*
-	bouncylogic	
+	bouncylogic
 	addq	#1, ob_delay(a5)
 	move	ob_delay(a5), d0
 	lsr	#1, d0
@@ -2013,7 +2032,7 @@ void BouncyLogic(MapObject& o, GameLogic* logic)
 	o.data.ms.frame = frames[(o.data.ms.delay >> 1) & 3] << 16;
 }
 
-void BouncyGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BouncyGot(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	bouncygot	bsr	playtsfx
@@ -2044,7 +2063,7 @@ void BouncyGot(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	}
 }
 
-void PlayerDead(MapObject& o, GameLogic* logic)
+void PlayerDead(MapObject &o, GameLogic *logic)
 {
 	/*
 	playerdead	bsr	getcntrl
@@ -2084,12 +2103,13 @@ void PlayerDead(MapObject& o, GameLogic* logic)
 	*/
 	o.data.ms.delay--;
 
-	if (o.data.ms.delay) return;
+	if (o.data.ms.delay)
+		return;
 
 	logic->ResetPlayer(o);
 }
 
-void PlayerDeath(MapObject& o, GameLogic* logic)
+void PlayerDeath(MapObject &o, GameLogic *logic)
 {
 	/*
 	playerdeath	bsr	getcntrl
@@ -2121,7 +2141,7 @@ void PlayerDeath(MapObject& o, GameLogic* logic)
 	o.data.ms.delay = 63;
 }
 
-void PlayerDie(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void PlayerDie(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	clr	ob_hitpoints(a5)
@@ -2138,7 +2158,7 @@ void PlayerDie(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	thisobj.data.ms.collwith = 0;
 }
 
-void DeathBounce(MapObject& o, GameLogic* logic)
+void DeathBounce(MapObject &o, GameLogic *logic)
 {
 	/*
 	deathbounce	addq	#4, ob_bounce(a5)
@@ -2156,15 +2176,15 @@ void DeathBounce(MapObject& o, GameLogic* logic)
 
 	o.data.ms.bounce += 4;
 	int16_t camrots[4];
-	GloomMaths::GetCamRotRaw(o.data.ms.bounce&255, camrots);
-	int32_t  ang = camrots[0];
+	GloomMaths::GetCamRotRaw(o.data.ms.bounce & 255, camrots);
+	int32_t ang = camrots[0];
 	ang <<= 5;
 	ang >>= 16;
 	ang -= 48;
 	o.y.SetInt(ang);
 }
 
-void DeathAnim(MapObject& o, GameLogic* logic)
+void DeathAnim(MapObject &o, GameLogic *logic)
 {
 	/*
 	deathanim	move.l	ob_framespeed(a5), d0
@@ -2190,7 +2210,7 @@ void DeathAnim(MapObject& o, GameLogic* logic)
 	}
 }
 
-void DeathCharge(MapObject& o, GameLogic* logic)
+void DeathCharge(MapObject &o, GameLogic *logic)
 {
 	/*
 	deathcharge	bsr	deathbounce
@@ -2217,7 +2237,8 @@ void DeathCharge(MapObject& o, GameLogic* logic)
 
 	int32_t ang = (logic->PickCalc(o) & 255) - (o.data.ms.rotquick.GetInt() & 255);
 
-	if (ang < 0) ang = -ang;
+	if (ang < 0)
+		ang = -ang;
 
 	if (ang < 128)
 	{
@@ -2227,7 +2248,7 @@ void DeathCharge(MapObject& o, GameLogic* logic)
 		}
 		else
 		{
-			o.data.ms.rotquick.SetInt(o.data.ms.rotquick.GetInt() +  128);
+			o.data.ms.rotquick.SetInt(o.data.ms.rotquick.GetInt() + 128);
 			o.data.ms.logic = DeathLogic;
 			o.data.ms.frame = 0x8000;
 			RndDelay(o);
@@ -2241,7 +2262,7 @@ void DeathCharge(MapObject& o, GameLogic* logic)
 	}
 }
 
-void DeathLogic(MapObject& o, GameLogic* logic)
+void DeathLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	;cruises around rotating at speed ob_delay
@@ -2278,10 +2299,11 @@ void DeathLogic(MapObject& o, GameLogic* logic)
 
 	if (CheckVecs(o, logic))
 	{
-		int32_t ang = (logic->PickCalc(o)&255) - (o.data.ms.rotquick.GetInt()&255);
+		int32_t ang = (logic->PickCalc(o) & 255) - (o.data.ms.rotquick.GetInt() & 255);
 
-		if (ang < 0) ang = -ang;
-		
+		if (ang < 0)
+			ang = -ang;
+
 		if (ang < 16)
 		{
 			o.data.ms.rotquick.SetInt(logic->PickCalc(o) & 255);
@@ -2304,7 +2326,7 @@ void DeathLogic(MapObject& o, GameLogic* logic)
 	}
 }
 
-void BlowDeath(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowDeath(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	if (logic->GetSucker())
 	{
@@ -2315,7 +2337,7 @@ void BlowDeath(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	BlowObjectNoChunks(thisobj, otherobj, logic);
 }
 
-void AddSoul(int num, uint8_t ang, MapObject& o, MapObject& pobj, GameLogic* logic)
+void AddSoul(int num, uint8_t ang, MapObject &o, MapObject &pobj, GameLogic *logic)
 {
 	int16_t camrots[4];
 
@@ -2396,7 +2418,7 @@ void AddSoul(int num, uint8_t ang, MapObject& o, MapObject& pobj, GameLogic* log
 		zvec += pobj.z.GetInt();
 
 		bloodobj.x.SetInt(xvec + (GloomMaths::RndW() & 63) - 32);
-		bloodobj.y.SetInt(110  + (GloomMaths::RndW() & 63) - 32);
+		bloodobj.y.SetInt(110 + (GloomMaths::RndW() & 63) - 32);
 		bloodobj.z.SetInt(zvec + (GloomMaths::RndW() & 63) - 32);
 
 		bloodobj.color = (GloomMaths::RndW() & 1) ? 0x0ff : 0x0f0;
@@ -2405,7 +2427,7 @@ void AddSoul(int num, uint8_t ang, MapObject& o, MapObject& pobj, GameLogic* log
 	}
 }
 
-void DeathSuck(MapObject& o, GameLogic* logic)
+void DeathSuck(MapObject &o, GameLogic *logic)
 {
 	/*
 	deathsuck	;death head sucking out a players soul!
@@ -2467,7 +2489,7 @@ void DeathSuck(MapObject& o, GameLogic* logic)
 	AddSoul(3, ang, o, pobj, logic);
 }
 
-void HurtDeath(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void HurtDeath(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	hurtdeath	;OK! death head hit!
@@ -2494,10 +2516,12 @@ void HurtDeath(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	.rts	rts
 	*/
 
-	if (logic->GetSucking()) return;
+	if (logic->GetSucking())
+		return;
 	MapObject pobj = logic->GetPlayerObj();
 
-	if (pobj.data.ms.logic != NullLogic) return;
+	if (pobj.data.ms.logic != NullLogic)
+		return;
 
 	logic->SetSucking(pobj.identifier);
 	logic->SetSucker(thisobj.identifier);
@@ -2511,7 +2535,7 @@ void HurtDeath(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	DeathSuck(thisobj, logic);
 }
 
-void DragonDead(MapObject& o, GameLogic* logic)
+void DragonDead(MapObject &o, GameLogic *logic)
 {
 	o.data.ms.delay--;
 
@@ -2521,7 +2545,7 @@ void DragonDead(MapObject& o, GameLogic* logic)
 	}
 }
 
-void BlowDragon(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowDragon(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	/*
 	blowdragon	;same, but messier...
@@ -2581,13 +2605,13 @@ void BlowDragon(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
 	thisobj.data.ms.delay = 127;
 }
 
-void DragonAnim(MapObject& o)
+void DragonAnim(MapObject &o)
 {
 	o.data.ms.frame += o.data.ms.framespeed;
 	o.data.ms.frame &= 0x3FFFF;
 }
 
-void GetObRot(MapObject& o)
+void GetObRot(MapObject &o)
 {
 	/*
 	getobrot	move	ob_rotspeed(a5),d0
@@ -2612,13 +2636,13 @@ void GetObRot(MapObject& o)
 	}
 }
 
-void BlowDB(MapObject& thisobj, MapObject& otherobj, GameLogic* logic)
+void BlowDB(MapObject &thisobj, MapObject &otherobj, GameLogic *logic)
 {
 	MakeSparksQ(thisobj, otherobj, logic);
 	thisobj.killme = true;
 }
 
-void HomeInLogic(MapObject& o, GameLogic* logic)
+void HomeInLogic(MapObject &o, GameLogic *logic)
 {
 
 	/*
@@ -2628,7 +2652,7 @@ void HomeInLogic(MapObject& o, GameLogic* logic)
 	move.l	camrots(pc),a0
 	lea	0(a0,d0*8),a0
 	*/
-	
+
 	if (!CheckVecs(o, logic))
 	{
 		BlowDB(o, o, logic);
@@ -2673,14 +2697,16 @@ void HomeInLogic(MapObject& o, GameLogic* logic)
 	bra	putfire
 	*/
 	o.data.ms.xvec += xacc;
-	if (abs(o.data.ms.xvec) > 0x200000) o.data.ms.xvec -= xacc;
+	if (abs(o.data.ms.xvec) > 0x200000)
+		o.data.ms.xvec -= xacc;
 
 	o.data.ms.zvec += zacc;
-	if (abs(o.data.ms.zvec) > 0x200000) o.data.ms.zvec -= zacc;
+	if (abs(o.data.ms.zvec) > 0x200000)
+		o.data.ms.zvec -= zacc;
 	PutFire(o, logic);
 }
 
-void DragonFire(MapObject& o, GameLogic* logic) // starring Sylvester McCoy as Doctor Who
+void DragonFire(MapObject &o, GameLogic *logic) // starring Sylvester McCoy as Doctor Who
 {
 	/*
 	dragonfire	;dragon fires at you!
@@ -2705,7 +2731,8 @@ void DragonFire(MapObject& o, GameLogic* logic) // starring Sylvester McCoy as D
 	;
 	*/
 	o.data.ms.delay--;
-	if (o.data.ms.delay > 0) return;
+	if (o.data.ms.delay > 0)
+		return;
 	if (o.data.ms.delay > (-16 * 8))
 	{
 		if ((o.data.ms.delay & 7) != 0)
@@ -2806,7 +2833,7 @@ void DragonFire(MapObject& o, GameLogic* logic) // starring Sylvester McCoy as D
 	b.data.ms.xvec = -(int32_t)camrots[1];
 	b.data.ms.xvec *= 16;
 	b.data.ms.xvec += o.data.ms.xvec;
-	
+
 	b.data.ms.nzvec = camrots[3];
 	b.data.ms.zvec = (int32_t)camrots[1];
 	b.data.ms.zvec *= 16;
@@ -2818,7 +2845,7 @@ void DragonFire(MapObject& o, GameLogic* logic) // starring Sylvester McCoy as D
 	logic->AddObject(b, false);
 }
 
-void DragonLogic(MapObject& o, GameLogic* logic)
+void DragonLogic(MapObject &o, GameLogic *logic)
 {
 	/*
 	dragonlogic	;OK! end of game baddy!
@@ -2857,9 +2884,10 @@ void DragonLogic(MapObject& o, GameLogic* logic)
 	bpl.s	.ansk
 	neg	d1
 	*/
-	int16_t ang = (o.data.ms.rotquick.GetInt()&255)-logic->PickCalc(o);
+	int16_t ang = (o.data.ms.rotquick.GetInt() & 255) - logic->PickCalc(o);
 
-	if (ang < 0) ang = -ang;
+	if (ang < 0)
+		ang = -ang;
 	/*
 	.ansk	moveq	#6,d0
 	tst	ob_rotspeed(a5)
@@ -2896,7 +2924,8 @@ void DragonLogic(MapObject& o, GameLogic* logic)
 		return;
 	}
 
-	if (o.data.ms.rotspeed == 0) return;
+	if (o.data.ms.rotspeed == 0)
+		return;
 	o.data.ms.rotspeed = 0;
 	SoundHandler::Play(SoundHandler::SOUND_DRAGON);
 }

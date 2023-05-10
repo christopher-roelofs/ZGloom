@@ -1,13 +1,14 @@
 #include "menuscreen.h"
 #include "config.h"
 
-void MenuScreen::Render(SDL_Surface* src, SDL_Surface* dest, Font& font)
+void MenuScreen::Render(SDL_Surface *src, SDL_Surface *dest, Font &font)
 {
 	SDL_BlitSurface(src, nullptr, dest, nullptr);
 	bool flash = (timer / 5) & 1;
 
 	int scale = dest->h / 256;
-	if (scale < 1) scale = 1;
+	if (scale < 1)
+		scale = 1;
 
 	if (status == MENUSTATUS_MAIN)
 	{
@@ -25,34 +26,40 @@ void MenuScreen::Render(SDL_Surface* src, SDL_Surface* dest, Font& font)
 	{
 		DisplayStandardMenu(displaymenu, flash, scale, dest, font);
 	}
+	// cheatmode
+	else if (status == MENUSTATUS_CHEATOPTIONS)
+	{
+		DisplayStandardMenu(cheatmenu, flash, scale, dest, font);
+	}
+	// ---
 	else if (status == MENUSTATUS_KEYCONFIG)
 	{
 		switch (selection)
 		{
-			case Config::KEY_UP:
-				font.PrintMessage("PRESS KEY FOR FORWARD", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_DOWN:
-				font.PrintMessage("PRESS KEY FOR BACK", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_LEFT:
-				font.PrintMessage("PRESS KEY FOR ROTATE LEFT", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_RIGHT:
-				font.PrintMessage("PRESS KEY FOR ROTATE RIGHT", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_SLEFT:
-				font.PrintMessage("PRESS KEY FOR STRAFE LEFT", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_SRIGHT:
-				font.PrintMessage("PRESS KEY FOR STRAFE RIGHT", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_STRAFEMOD:
-				font.PrintMessage("PRESS KEY FOR STRAFE MODIFIER", 120 * scale, dest, scale);
-				break;
-			case Config::KEY_SHOOT:
-				font.PrintMessage("PRESS KEY FOR SHOOT", 120 * scale, dest, scale);
-				break;
+		case Config::KEY_UP:
+			font.PrintMessage("PRESS KEY FOR FORWARD", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_DOWN:
+			font.PrintMessage("PRESS KEY FOR BACK", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_LEFT:
+			font.PrintMessage("PRESS KEY FOR ROTATE LEFT", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_RIGHT:
+			font.PrintMessage("PRESS KEY FOR ROTATE RIGHT", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_SLEFT:
+			font.PrintMessage("PRESS KEY FOR STRAFE LEFT", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_SRIGHT:
+			font.PrintMessage("PRESS KEY FOR STRAFE RIGHT", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_STRAFEMOD:
+			font.PrintMessage("PRESS KEY FOR STRAFE MODIFIER", 120 * scale, dest, scale);
+			break;
+		case Config::KEY_SHOOT:
+			font.PrintMessage("PRESS KEY FOR SHOOT", 120 * scale, dest, scale);
+			break;
 		}
 	}
 }
@@ -67,6 +74,7 @@ MenuScreen::MenuScreen()
 	mainmenu.push_back(MenuEntry("CONTROL OPTIONS", ACTION_SWITCHMENU, MENUSTATUS_CONTROLOPTIONS, nullptr, nullptr));
 	mainmenu.push_back(MenuEntry("SOUND OPTIONS", ACTION_SWITCHMENU, MENUSTATUS_SOUNDOPTIONS, nullptr, nullptr));
 	mainmenu.push_back(MenuEntry("DISPLAY OPTIONS", ACTION_SWITCHMENU, MENUSTATUS_DISPLAYOPTIONS, nullptr, nullptr));
+	mainmenu.push_back(MenuEntry("CHEAT OPTIONS", ACTION_SWITCHMENU, MENUSTATUS_CHEATOPTIONS, nullptr, nullptr));
 	mainmenu.push_back(MenuEntry("QUIT TO TITLE", ACTION_RETURN, MENURET_QUIT, nullptr, nullptr));
 
 	soundmenu.push_back(MenuEntry("RETURN", ACTION_SWITCHMENU, MENUSTATUS_MAIN, nullptr, nullptr));
@@ -83,6 +91,12 @@ MenuScreen::MenuScreen()
 	displaymenu.push_back(MenuEntry("FULLSCREEN: ", ACTION_BOOL, 0, Config::GetFullscreen, Config::SetFullscreen));
 	displaymenu.push_back(MenuEntry("MULTITHREAD RENDERER: ", ACTION_BOOL, 0, Config::GetMT, Config::SetMT));
 
+	// cheatmode
+	cheatmenu.push_back(MenuEntry("RETURN", ACTION_SWITCHMENU, MENUSTATUS_MAIN, nullptr, nullptr));
+	cheatmenu.push_back(MenuEntry("NEARLY INFINITE HEALTH: ", ACTION_BOOL, 0, Config::GetGM, Config::SetGM));
+	//	cheatmenu.push_back(MenuEntry("MAX LIVES ARE 99: ", ACTION_BOOL, 0, Config::GetUL, Config::SetUL));
+	cheatmenu.push_back(MenuEntry("PHOTON WEAPON AT START: ", ACTION_BOOL, 0, Config::GetMW, Config::SetMW));
+	// ---
 }
 
 void MenuScreen::HandleKeyMenu(SDL_Keycode sym)
@@ -96,48 +110,51 @@ void MenuScreen::HandleKeyMenu(SDL_Keycode sym)
 	}
 }
 
-MenuScreen::MenuReturn MenuScreen::HandleStandardMenu(SDL_Keycode sym, std::vector<MenuEntry>& menu)
+MenuScreen::MenuReturn MenuScreen::HandleStandardMenu(SDL_Keycode sym, std::vector<MenuEntry> &menu)
 {
 	switch (sym)
 	{
 	case SDLK_DOWN:
 		selection++;
-		if (selection == menu.size()) selection = menu.size() - 1;
+		if (selection == menu.size())
+			selection = menu.size() - 1;
 		break;
 	case SDLK_UP:
 		selection--;
-		if (selection == -1) selection = 0;
+		if (selection == -1)
+			selection = 0;
 		break;
 	case SDLK_SPACE:
 	case SDLK_RETURN:
 	case SDLK_LCTRL:
 		switch (menu[selection].action)
 		{
-			case ACTION_BOOL:
-			{
-				menu[selection].setval(!menu[selection].getval());
-				break;
-			}
-			case ACTION_INT:
-			{
-				int x = (menu[selection].getval() + 1);
-				if (x >= menu[selection].arg) x = 0;
-				menu[selection].setval(x);
-				break;
-			}
-			case ACTION_SWITCHMENU:
-			{
-				status = (MENUSTATUS)menu[selection].arg;
-				selection = 0;
-				break;
-			}
-			case ACTION_RETURN:
-			{
-				return (MenuReturn)menu[selection].arg;
-				break;
-			}
-			default:
-				break;
+		case ACTION_BOOL:
+		{
+			menu[selection].setval(!menu[selection].getval());
+			break;
+		}
+		case ACTION_INT:
+		{
+			int x = (menu[selection].getval() + 1);
+			if (x >= menu[selection].arg)
+				x = 0;
+			menu[selection].setval(x);
+			break;
+		}
+		case ACTION_SWITCHMENU:
+		{
+			status = (MENUSTATUS)menu[selection].arg;
+			selection = 0;
+			break;
+		}
+		case ACTION_RETURN:
+		{
+			return (MenuReturn)menu[selection].arg;
+			break;
+		}
+		default:
+			break;
 		}
 
 	default:
@@ -147,7 +164,7 @@ MenuScreen::MenuReturn MenuScreen::HandleStandardMenu(SDL_Keycode sym, std::vect
 	return MENURET_NOTHING;
 }
 
-MenuScreen::MenuReturn MenuScreen::Update(SDL_Event& tevent)
+MenuScreen::MenuReturn MenuScreen::Update(SDL_Event &tevent)
 {
 	if (tevent.type == SDL_KEYDOWN)
 	{
@@ -182,6 +199,14 @@ MenuScreen::MenuReturn MenuScreen::Update(SDL_Event& tevent)
 			break;
 		}
 
+		// cheatmode
+		case MENUSTATUS_CHEATOPTIONS:
+		{
+			HandleStandardMenu(tevent.key.keysym.sym,cheatmenu);
+			break;
+		}
+			// ---
+
 		default:
 			break;
 		}
@@ -190,7 +215,7 @@ MenuScreen::MenuReturn MenuScreen::Update(SDL_Event& tevent)
 	return MENURET_NOTHING;
 }
 
-void MenuScreen::DisplayStandardMenu(std::vector<MenuEntry>& menu, bool flash, int scale, SDL_Surface* dest, Font& font)
+void MenuScreen::DisplayStandardMenu(std::vector<MenuEntry> &menu, bool flash, int scale, SDL_Surface *dest, Font &font)
 {
 	int starty = 100 * scale;
 	int yinc = 10 * scale;
@@ -217,8 +242,9 @@ void MenuScreen::DisplayStandardMenu(std::vector<MenuEntry>& menu, bool flash, i
 		}
 		else
 		{
-			if (flash || (selection != i)) font.PrintMessage(menu[i].name, starty, dest, scale);
+			if (flash || (selection != i))
+				font.PrintMessage(menu[i].name, starty, dest, scale);
 		}
-		starty += yinc * ((i==0)? 2 : 1);
+		starty += yinc * ((i == 0) ? 2 : 1);
 	}
 }

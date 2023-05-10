@@ -10,6 +10,7 @@
 namespace Config
 {
 	static bool zombiemassacremode = false;
+	static std::string selectedGame = "";
 
 	static int configkeys[KEY_END];
 	static int renderwidth;
@@ -19,6 +20,9 @@ namespace Config
 	static int32_t focallength;
 	static int mousesens;
 	static bool autofire;
+	static bool godmode;		// cheatmode
+	static bool unlimitedlives; // cheatmode
+	static bool maxweapon;		// cheatmode
 	static int bloodsize;
 	static bool debug = false;
 	static uint32_t FPS;
@@ -32,9 +36,19 @@ namespace Config
 	static xmp_context musctx;
 
 	// needed to toggle fullscreen
-	static SDL_Window* win;
+	static SDL_Window *win;
 
 	static SDL_GameController *controller = nullptr;
+
+	void SetGame(std::string game)
+	{
+		selectedGame = game;
+	}
+
+	std::string GetGamePath()
+	{
+		return selectedGame;
+	}
 
 	void SetDebug(bool b)
 	{
@@ -58,7 +72,7 @@ namespace Config
 
 	void SetFullscreen(int f)
 	{
-		fullscreen = f?1:0;
+		fullscreen = f ? 1 : 0;
 
 		if (fullscreen)
 		{
@@ -72,7 +86,7 @@ namespace Config
 
 	int GetFullscreen()
 	{
-		return fullscreen?1:0;
+		return fullscreen ? 1 : 0;
 	}
 
 	int GetSwitchSticks()
@@ -94,12 +108,12 @@ namespace Config
 	{
 		if (zombiemassacremode)
 		{
-			std::string result = "stuf/stages";
+			std::string result = selectedGame + "/stuf/stages";
 			return result;
 		}
 		else
 		{
-			std::string result = "misc/script";
+			std::string result = selectedGame + "/misc/script";
 			return result;
 		}
 	}
@@ -108,12 +122,12 @@ namespace Config
 	{
 		if (zombiemassacremode)
 		{
-			std::string result = "stuf/";
+			std::string result = selectedGame + "/stuf/";
 			return result;
 		}
 		else
 		{
-			std::string result = "misc/";
+			std::string result = selectedGame + "/misc/";
 			return result;
 		}
 	}
@@ -122,12 +136,12 @@ namespace Config
 	{
 		if (zombiemassacremode)
 		{
-			std::string result = "pixs/";
+			std::string result = selectedGame + "/pixs/";
 			return result;
 		}
 		else
 		{
-			std::string result = "pics/";
+			std::string result = selectedGame + "/pics/";
 			return result;
 		}
 	}
@@ -136,12 +150,12 @@ namespace Config
 	{
 		if (zombiemassacremode)
 		{
-			std::string result = "lvls/";
+			std::string result = selectedGame + "/lvls/";
 			return result;
 		}
 		else
 		{
-			std::string result = "maps/";
+			std::string result = selectedGame + "/maps/";
 			return result;
 		}
 	}
@@ -169,11 +183,17 @@ namespace Config
 		std::string result;
 		if (zombiemassacremode)
 		{
-			if (i == 0) result = "musi/meda"; else result = "musi/medb";
+			if (i == 0)
+				result = selectedGame + "/musi/meda";
+			else
+				result = selectedGame + "/musi/medb";
 		}
 		else
 		{
-			if (i == 0) result = "sfxs/med1"; else result = "sfxs/med2";
+			if (i == 0)
+				result = selectedGame + "/sfxs/med1";
+			else
+				result = selectedGame + "/sfxs/med2";
 		}
 
 		return result;
@@ -184,11 +204,11 @@ namespace Config
 		std::string result;
 		if (zombiemassacremode)
 		{
-			result = "musi/"; 
+			result = selectedGame + "/musi/";
 		}
 		else
 		{
-			result = "sfxs/"; 
+			result = selectedGame + "/sfxs/";
 		}
 
 		return result;
@@ -199,7 +219,7 @@ namespace Config
 		musctx = ctx;
 	}
 
-	void RegisterWin(SDL_Window* _win)
+	void RegisterWin(SDL_Window *_win)
 	{
 		win = _win;
 	}
@@ -209,82 +229,80 @@ namespace Config
 		if (zombiemassacremode)
 		{
 			// some of this is guesswork, need to check
-			objectfilenames[ObjectGraphics::OGT_TOKENS] = "char/pwrups";
-			objectfilenames[ObjectGraphics::OGT_MARINE] = "char/troopr";
-			objectfilenames[ObjectGraphics::OGT_BALDY] = "char/zombi";
-			objectfilenames[ObjectGraphics::OGT_TERRA] = "char/fatzo";
-			objectfilenames[ObjectGraphics::OGT_PHANTOM] = "char/zomboid";
-			objectfilenames[ObjectGraphics::OGT_GHOUL] = "char/ghost";
-			objectfilenames[ObjectGraphics::OGT_DRAGON] = "char/zombie";
-			objectfilenames[ObjectGraphics::OGT_LIZARD] = "char/skinny";
-			objectfilenames[ObjectGraphics::OGT_DEMON] = "char/zocom";
-			objectfilenames[ObjectGraphics::OGT_DEATHHEAD] = "char/dows-head";
-			objectfilenames[ObjectGraphics::OGT_TROLL] = "char/james";
+			objectfilenames[ObjectGraphics::OGT_TOKENS] = selectedGame + "/char/pwrups";
+			objectfilenames[ObjectGraphics::OGT_MARINE] = selectedGame + "/char/troopr";
+			objectfilenames[ObjectGraphics::OGT_BALDY] = selectedGame + "/char/zombi";
+			objectfilenames[ObjectGraphics::OGT_TERRA] = selectedGame + "/char/fatzo";
+			objectfilenames[ObjectGraphics::OGT_PHANTOM] = selectedGame + "/char/zomboid";
+			objectfilenames[ObjectGraphics::OGT_GHOUL] = selectedGame + "/char/ghost";
+			objectfilenames[ObjectGraphics::OGT_DRAGON] = selectedGame + "/char/zombie";
+			objectfilenames[ObjectGraphics::OGT_LIZARD] = selectedGame + "/char/skinny";
+			objectfilenames[ObjectGraphics::OGT_DEMON] = selectedGame + "/char/zocom";
+			objectfilenames[ObjectGraphics::OGT_DEATHHEAD] = selectedGame + "/char/dows-head";
+			objectfilenames[ObjectGraphics::OGT_TROLL] = selectedGame + "/char/james";
 
-
-			//double check these
-			soundfilenames[SoundHandler::SOUND_SHOOT] = "musi/shoot.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT2] = "musi/shoot2.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT3] = "musi/shoot3.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT4] = "musi/shoot4.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT5] = "musi/shoot5.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT] = "musi/groan.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT2] = "musi/groan2.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT3] = "musi/groan3.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT4] = "musi/groan4.bin";
-			soundfilenames[SoundHandler::SOUND_TOKEN] = "musi/pwrup.bin";
-			soundfilenames[SoundHandler::SOUND_DOOR] = "musi/door.bin";
-			soundfilenames[SoundHandler::SOUND_FOOTSTEP] = "musi/footstep.bin";
-			soundfilenames[SoundHandler::SOUND_DIE] = "musi/die.bin";
-			soundfilenames[SoundHandler::SOUND_SPLAT] = "musi/splat.bin";
-			soundfilenames[SoundHandler::SOUND_TELEPORT] = "musi/teleport.bin";
-			soundfilenames[SoundHandler::SOUND_GHOUL] = "musi/ghost.bin";
-			soundfilenames[SoundHandler::SOUND_LIZARD] = "musi/skinny.bin";
-			soundfilenames[SoundHandler::SOUND_LIZHIT] = "musi/skihit.bin";
-			soundfilenames[SoundHandler::SOUND_TROLLMAD] = "musi/jamesmad.bin";
-			soundfilenames[SoundHandler::SOUND_TROLLHIT] = "musi/jameshit.bin";
-			soundfilenames[SoundHandler::SOUND_ROBOT] = "musi/fatzo.bin";
-			soundfilenames[SoundHandler::SOUND_ROBODIE] = "musi/fatzdie.bin";
-			soundfilenames[SoundHandler::SOUND_DRAGON] = "musi/zombie.bin";
+			// double check these
+			soundfilenames[SoundHandler::SOUND_SHOOT] = selectedGame + "/musi/shoot.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT2] = selectedGame + "/musi/shoot2.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT3] = selectedGame + "/musi/shoot3.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT4] = selectedGame + "/musi/shoot4.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT5] = selectedGame + "/musi/shoot5.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT] = selectedGame + "/musi/groan.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT2] = selectedGame + "/musi/groan2.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT3] = selectedGame + "/musi/groan3.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT4] = selectedGame + "/musi/groan4.bin";
+			soundfilenames[SoundHandler::SOUND_TOKEN] = selectedGame + "/musi/pwrup.bin";
+			soundfilenames[SoundHandler::SOUND_DOOR] = selectedGame + "/musi/door.bin";
+			soundfilenames[SoundHandler::SOUND_FOOTSTEP] = selectedGame + "/musi/footstep.bin";
+			soundfilenames[SoundHandler::SOUND_DIE] = selectedGame + "/musi/die.bin";
+			soundfilenames[SoundHandler::SOUND_SPLAT] = selectedGame + "/musi/splat.bin";
+			soundfilenames[SoundHandler::SOUND_TELEPORT] = selectedGame + "/musi/teleport.bin";
+			soundfilenames[SoundHandler::SOUND_GHOUL] = selectedGame + "/musi/ghost.bin";
+			soundfilenames[SoundHandler::SOUND_LIZARD] = selectedGame + "/musi/skinny.bin";
+			soundfilenames[SoundHandler::SOUND_LIZHIT] = selectedGame + "/musi/skihit.bin";
+			soundfilenames[SoundHandler::SOUND_TROLLMAD] = selectedGame + "/musi/jamesmad.bin";
+			soundfilenames[SoundHandler::SOUND_TROLLHIT] = selectedGame + "/musi/jameshit.bin";
+			soundfilenames[SoundHandler::SOUND_ROBOT] = selectedGame + "/musi/fatzo.bin";
+			soundfilenames[SoundHandler::SOUND_ROBODIE] = selectedGame + "/musi/fatzdie.bin";
+			soundfilenames[SoundHandler::SOUND_DRAGON] = selectedGame + "/musi/zombie.bin";
 		}
 		else
 		{
-			objectfilenames[ObjectGraphics::OGT_TOKENS] = "objs/tokens";
-			objectfilenames[ObjectGraphics::OGT_MARINE] = "objs/marine";
-			objectfilenames[ObjectGraphics::OGT_BALDY] = "objs/baldy";
-			objectfilenames[ObjectGraphics::OGT_TERRA] = "objs/terra";
-			objectfilenames[ObjectGraphics::OGT_PHANTOM] = "objs/phantom";
-			objectfilenames[ObjectGraphics::OGT_GHOUL] = "objs/ghoul";
-			objectfilenames[ObjectGraphics::OGT_DRAGON] = "objs/dragon";
-			objectfilenames[ObjectGraphics::OGT_LIZARD] = "objs/lizard";
-			objectfilenames[ObjectGraphics::OGT_DEMON] = "objs/demon";
-			objectfilenames[ObjectGraphics::OGT_DEATHHEAD] = "objs/deathhead";
-			objectfilenames[ObjectGraphics::OGT_TROLL] = "objs/troll";
+			objectfilenames[ObjectGraphics::OGT_TOKENS] = selectedGame + "/objs/tokens";
+			objectfilenames[ObjectGraphics::OGT_MARINE] = selectedGame + "/objs/marine";
+			objectfilenames[ObjectGraphics::OGT_BALDY] = selectedGame + "/objs/baldy";
+			objectfilenames[ObjectGraphics::OGT_TERRA] = selectedGame + "/objs/terra";
+			objectfilenames[ObjectGraphics::OGT_PHANTOM] = selectedGame + "/objs/phantom";
+			objectfilenames[ObjectGraphics::OGT_GHOUL] = selectedGame + "/objs/ghoul";
+			objectfilenames[ObjectGraphics::OGT_DRAGON] = selectedGame + "/objs/dragon";
+			objectfilenames[ObjectGraphics::OGT_LIZARD] = selectedGame + "/objs/lizard";
+			objectfilenames[ObjectGraphics::OGT_DEMON] = selectedGame + "/objs/demon";
+			objectfilenames[ObjectGraphics::OGT_DEATHHEAD] = selectedGame + "/objs/deathhead";
+			objectfilenames[ObjectGraphics::OGT_TROLL] = selectedGame + "/objs/troll";
 
-
-			soundfilenames[SoundHandler::SOUND_SHOOT] = "sfxs/shoot.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT2] = "sfxs/shoot2.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT3] = "sfxs/shoot3.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT4] = "sfxs/shoot4.bin";
-			soundfilenames[SoundHandler::SOUND_SHOOT5] = "sfxs/shoot5.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT] = "sfxs/grunt.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT2] = "sfxs/grunt2.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT3] = "sfxs/grunt3.bin";
-			soundfilenames[SoundHandler::SOUND_GRUNT4] = "sfxs/grunt4.bin";
-			soundfilenames[SoundHandler::SOUND_TOKEN] = "sfxs/token.bin";
-			soundfilenames[SoundHandler::SOUND_DOOR] = "sfxs/door.bin";
-			soundfilenames[SoundHandler::SOUND_FOOTSTEP] = "sfxs/footstep.bin";
-			soundfilenames[SoundHandler::SOUND_DIE] = "sfxs/die.bin";
-			soundfilenames[SoundHandler::SOUND_SPLAT] = "sfxs/splat.bin";
-			soundfilenames[SoundHandler::SOUND_TELEPORT] = "sfxs/teleport.bin";
-			soundfilenames[SoundHandler::SOUND_GHOUL] = "sfxs/ghoul.bin";
-			soundfilenames[SoundHandler::SOUND_LIZARD] = "sfxs/lizard.bin";
-			soundfilenames[SoundHandler::SOUND_LIZHIT] = "sfxs/lizhit.bin";
-			soundfilenames[SoundHandler::SOUND_TROLLMAD] = "sfxs/trollmad.bin";
-			soundfilenames[SoundHandler::SOUND_TROLLHIT] = "sfxs/trollhit.bin";
-			soundfilenames[SoundHandler::SOUND_ROBOT] = "sfxs/robot.bin";
-			soundfilenames[SoundHandler::SOUND_ROBODIE] = "sfxs/robodie.bin";
-			soundfilenames[SoundHandler::SOUND_DRAGON] = "sfxs/dragon.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT] = selectedGame + "/sfxs/shoot.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT2] = selectedGame + "/sfxs/shoot2.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT3] = selectedGame + "/sfxs/shoot3.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT4] = selectedGame + "/sfxs/shoot4.bin";
+			soundfilenames[SoundHandler::SOUND_SHOOT5] = selectedGame + "/sfxs/shoot5.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT] = selectedGame + "/sfxs/grunt.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT2] = selectedGame + "/sfxs/grunt2.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT3] = selectedGame + "/sfxs/grunt3.bin";
+			soundfilenames[SoundHandler::SOUND_GRUNT4] = selectedGame + "/sfxs/grunt4.bin";
+			soundfilenames[SoundHandler::SOUND_TOKEN] = selectedGame + "/sfxs/token.bin";
+			soundfilenames[SoundHandler::SOUND_DOOR] = selectedGame + "/sfxs/door.bin";
+			soundfilenames[SoundHandler::SOUND_FOOTSTEP] = selectedGame + "/sfxs/footstep.bin";
+			soundfilenames[SoundHandler::SOUND_DIE] = selectedGame + "/sfxs/die.bin";
+			soundfilenames[SoundHandler::SOUND_SPLAT] = selectedGame + "/sfxs/splat.bin";
+			soundfilenames[SoundHandler::SOUND_TELEPORT] = selectedGame + "/sfxs/teleport.bin";
+			soundfilenames[SoundHandler::SOUND_GHOUL] = selectedGame + "/sfxs/ghoul.bin";
+			soundfilenames[SoundHandler::SOUND_LIZARD] = selectedGame + "/sfxs/lizard.bin";
+			soundfilenames[SoundHandler::SOUND_LIZHIT] = selectedGame + "/sfxs/lizhit.bin";
+			soundfilenames[SoundHandler::SOUND_TROLLMAD] = selectedGame + "/sfxs/trollmad.bin";
+			soundfilenames[SoundHandler::SOUND_TROLLHIT] = selectedGame + "/sfxs/trollhit.bin";
+			soundfilenames[SoundHandler::SOUND_ROBOT] = selectedGame + "/sfxs/robot.bin";
+			soundfilenames[SoundHandler::SOUND_ROBODIE] = selectedGame + "/sfxs/robodie.bin";
+			soundfilenames[SoundHandler::SOUND_DRAGON] = selectedGame + "/sfxs/dragon.bin";
 		}
 
 		configkeys[KEY_SHOOT] = SDL_SCANCODE_LCTRL;
@@ -317,9 +335,13 @@ namespace Config
 
 		autofire = false;
 
-		for (int i = 0; i < SDL_NumJoysticks(); ++i) 
+		godmode = false;		// cheatmode
+		unlimitedlives = false; // cheatmode
+		maxweapon = false;		// cheatmode
+
+		for (int i = 0; i < SDL_NumJoysticks(); ++i)
 		{
-			if (SDL_IsGameController(i)) 
+			if (SDL_IsGameController(i))
 			{
 				controller = SDL_GameControllerOpen(i);
 				break;
@@ -335,15 +357,15 @@ namespace Config
 			while (!file.eof())
 			{
 				std::string line;
-					
+
 				std::getline(file, line);
 
 				if (line.size() && (line[0] != ';'))
 				{
 					std::string command = line.substr(0, line.find(" "));
-					line = line.substr(line.find(" ")+1, std::string::npos);
+					line = line.substr(line.find(" ") + 1, std::string::npos);
 
-					//std::cout << "\"" << line << "\"" << std::endl;
+					// std::cout << "\"" << line << "\"" << std::endl;
 
 					if (command == "keys")
 					{
@@ -391,7 +413,7 @@ namespace Config
 					}
 					if (command == "multithread")
 					{
-						multithread = std::stoi(line)!=0;
+						multithread = std::stoi(line) != 0;
 					}
 					if (command == "vsync")
 					{
@@ -405,6 +427,21 @@ namespace Config
 					{
 						autofire = std::stoi(line) != 0;
 					}
+
+					// cheatmode
+					if (command == "godmode")
+					{
+						godmode = std::stoi(line) != 0;
+					}
+					if (command == "unlimitedlives")
+					{
+						unlimitedlives = std::stoi(line) != 0;
+					}
+					if (command == "maxweapon")
+					{
+						maxweapon = std::stoi(line) != 0;
+					}
+					// ---
 				}
 			}
 
@@ -419,7 +456,7 @@ namespace Config
 
 	void SetKey(keyenum k, int newval)
 	{
-		configkeys[k] = newval; 
+		configkeys[k] = newval;
 	}
 
 	int GetMouseSens()
@@ -444,7 +481,7 @@ namespace Config
 
 	int GetMT()
 	{
-		return multithread?1:0;
+		return multithread ? 1 : 0;
 	}
 
 	void SetMT(int s)
@@ -480,12 +517,40 @@ namespace Config
 
 	void SetAutoFire(int a)
 	{
-		autofire = (a!=0);
+		autofire = (a != 0);
 	}
+
+	// cheatmode
+	int GetGM()
+	{
+		return godmode ? 1 : 0;
+	}
+	int GetUL()
+	{
+		return unlimitedlives ? 1 : 0;
+	}
+	int GetMW()
+	{
+		return maxweapon ? 1 : 0;
+	}
+
+	void SetGM(int s)
+	{
+		godmode = (s != 0);
+	}
+	void SetUL(int s)
+	{
+		unlimitedlives = (s != 0);
+	}
+	void SetMW(int s)
+	{
+		maxweapon = (s != 0);
+	}
+	// ---
 
 	bool HaveController()
 	{
-		return controller != nullptr;
+	    return controller != nullptr;
 	}
 
 	Sint16 GetControllerRot()
@@ -505,18 +570,28 @@ namespace Config
 
 	bool GetControllerFire()
 	{
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A)) return true;
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_B)) return true;
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_X)) return true;
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_Y)) return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A))
+			return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_B))
+			return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_X))
+			return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_Y))
+			return true;
 
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSTICK)) return true;
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK)) return true;
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) return true;
-		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSTICK))
+			return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK))
+			return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER))
+			return true;
+		if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER))
+			return true;
 
-		if (SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT) > 8000) return true;
-		if (SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > 8000) return true;
+		if (SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT) > 8000)
+			return true;
+		if (SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > 8000)
+			return true;
 
 		return false;
 	}
@@ -524,15 +599,23 @@ namespace Config
 	// just for menus
 	bool GetControllerDown()
 	{
-		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN)!=0;
+		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN) != 0;
 	}
 	bool GetControllerUp()
 	{
-		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP)!=0;
+		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP) != 0;
+	}
+	bool GetControllerLeft()
+	{
+		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) != 0;
+	}
+	bool GetControllerRight()
+	{
+		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) != 0;
 	}
 	bool GetControllerStart()
 	{
-		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START)!=0;
+		return SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START) != 0;
 	}
 	bool GetControllerBack()
 	{
@@ -542,8 +625,8 @@ namespace Config
 	void SetMusicVol(int vol)
 	{
 		musvol = vol;
-		//this does not seem to work with Hook'ed audio? Can't find any documentation explicitly forbidding it
-		//Mix_VolumeMusic(vol * 12);
+		// this does not seem to work with Hook'ed audio? Can't find any documentation explicitly forbidding it
+		// Mix_VolumeMusic(vol * 12);
 		for (int i = 0; i < XMP_MAX_CHANNELS; i++)
 		{
 			xmp_channel_vol(musctx, i, vol * 7);
@@ -606,16 +689,23 @@ namespace Config
 			file << "musvol " << musvol << "\n";
 
 			file << ";multithreaded renderer (somewhat experimental)\n";
-			file << "multithread " << (multithread?1:0) << "\n";
+			file << "multithread " << (multithread ? 1 : 0) << "\n";
 
 			file << ";rapidfire?\n";
 			file << "autofire " << (autofire ? 1 : 0) << "\n";
+
+			// cheatmode
+			file << "\n;Cheatmode?\n";
+			file << "godmode " << (godmode ? 1 : 0) << "\n";
+			file << "unlimitedlives " << (unlimitedlives ? 1 : 0) << "\n";
+			file << "maxweapon " << (maxweapon ? 1 : 0) << "\n";
+			// ---
 
 			file.close();
 		}
 	}
 
-	void GetRenderSizes(int &rw, int &rh, int &ww, int& wh)
+	void GetRenderSizes(int &rw, int &rh, int &ww, int &wh)
 	{
 		rw = renderwidth;
 		rh = renderheight;

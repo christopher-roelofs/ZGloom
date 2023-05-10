@@ -125,10 +125,18 @@ enum GameState
 
 int main(int argc, char* argv[])
 {
+	if (argv[1] != NULL){
+		Config::SetGame(argv[1]);
+		std::cout << "Selected game: : " << argv[1] << std::endl;
+	}
+	else {
+		Config::SetGame("gloom");
+		std::cout << "No game selected, defaulting to gloom" << std::endl;
+	}
+
 	/* AUTODETECT ZM FIRST!*/
-	if (FILE* file = fopen("stuf/stages", "r"))
+	if (Config::GetGamePath() == "massacre")
 	{
-		fclose(file);
 		Config::SetZM(true);
 	}
 
@@ -164,8 +172,18 @@ int main(int argc, char* argv[])
 	intermissionmusic.Load(Config::GetMusicFilename(1).c_str());
 
 	SoundHandler::Init();
+	
+	SDL_DisplayMode current;
+	
+	int should_be_zero = SDL_GetCurrentDisplayMode(0, &current);
+	
+	 if (should_be_zero != 0) {
+        std::cout << "Failed to get display mode" << SDL_GetError() << std::endl;
+        return 1;
+    }
+    
 
-	SDL_Window* win = SDL_CreateWindow("ZGloom", 100, 100, windowwidth, windowheight, SDL_WINDOW_SHOWN | (Config::GetFullscreen()?SDL_WINDOW_FULLSCREEN:0) );
+	SDL_Window* win = SDL_CreateWindow("ZGloom", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, current.w, current.h, SDL_WINDOW_SHOWN | (Config::GetFullscreen()?SDL_WINDOW_FULLSCREEN:0) );
 	if (win == nullptr)
 	{
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
@@ -180,6 +198,7 @@ int main(int argc, char* argv[])
 		std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
+	SDL_RenderSetLogicalSize(ren, windowwidth, windowheight);
 
 	SDL_Texture* rendertex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
 	if (rendertex == nullptr)

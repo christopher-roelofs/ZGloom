@@ -2,6 +2,7 @@
 #include "gloommaths.h"
 #include "monsterlogic.h"
 #include "soundhandler.h"
+#include "config.h"
 
 static uint16_t Get16(const uint8_t* p)
 {
@@ -153,7 +154,7 @@ void Zone::DumpDebug(FILE* fFile)
 
 void Texture::Load(const char* name)
 {
-	std::string fname = "txts/";
+	std::string fname = Config::GetGamePath() + "/txts/";
 
 	fname += name;
 
@@ -442,13 +443,13 @@ void GloomMap::SetFlat(char f)
 {
 	hasflat = true;
 
-	std::string name = "txts/floor";
+	std::string name = Config::GetGamePath() + "/txts/floor";
 
 	name += f + '0';
 
 	floor.Load(name.c_str());
 
-	name = "txts/roof";
+	name =  Config::GetGamePath() + "/txts/roof";
 
 	name += f + '0';
 

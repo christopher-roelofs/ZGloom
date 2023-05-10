@@ -24,6 +24,8 @@ namespace Config
 	};
 
 	void SetZM(bool zm);
+	std::string GetGamePath();
+	void SetGame(std::string game);
 	std::string GetScriptName();
 	std::string GetPicsDir();
 	std::string GetLevelDir();
@@ -55,6 +57,15 @@ namespace Config
 	int GetAutoFire();
 	void SetAutoFire(int a);
 
+	// cheatmode
+	int GetGM(); // godmode
+	void SetGM(int s); // godmode
+	int GetUL(); // unlimited lives
+	void SetUL(int s); // unlimited lives
+	int GetMW(); // max weapon
+	void SetMW(int s); // max weapon
+	// ---
+
 	//controller support
 	bool HaveController();
 	Sint16 GetControllerRot();
@@ -63,6 +74,8 @@ namespace Config
 	bool GetControllerFire();
 	bool GetControllerDown();
 	bool GetControllerUp();
+	bool GetControllerLeft();
+	bool GetControllerRight();
 	bool GetControllerStart();
 	bool GetControllerBack();
 
